@@ -79,7 +79,7 @@ class RSIStrategy(QThread):
 
             else:
                 if check_transaction_closed():
-                    sql = "select max('{}') from '{}'".format('index', code)
+                    sql = "select max(`{}`) from `{}`".format('index', code)
                     cur = execute_sql(self.strategy_name, sql)
 
                     last_date = cur.fetchone()
@@ -91,7 +91,7 @@ class RSIStrategy(QThread):
                         insert_df_to_db(self.strategy_name, code, price_df)
 
                 else:
-                    sql = "select * from '{}'".format(code)
+                    sql = "select * from `{}`".format(code)
                     cur = execute_sql(self.strategy_name, sql)
                     cols = [column[0] for column in cur.description]
 
@@ -240,13 +240,13 @@ class RSIStrategy(QThread):
             if quantity < 1:
                 return
 
-            amount = quantity + bid
+            amount = quantity * bid
             self.deposit = math.floor(self.deposit - amount * 1.00035)
 
             if self.deposit < 0:
                 return
 
-            order_result = self. kiwoom.send_order('send_buy_order', '1001', 1, code, quantity, bid, '00')
+            order_result = self.kiwoom.send_order('send_buy_order', '1001', 1, code, quantity, bid, '00')
 
             self.kiwoom.order[code] = {'주문구분': '매수', '미체결수량': quantity}
 
